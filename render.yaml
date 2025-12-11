@@ -20,15 +20,13 @@ services:
       - key: LOG_LEVEL
         value: INFO
     healthCheckPath: /health
+  - type: redis
+    name: feature-store-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
 
 databases:
   - name: feature-store-db
     databaseName: features
     user: postgres
     plan: free
-
-services:
-  - type: redis
-    name: feature-store-redis
-    plan: free
-    maxmemoryPolicy: allkeys-lru
