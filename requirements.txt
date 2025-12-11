@@ -1,0 +1,28 @@
+# Minimal requirements for Windows (Python 3.11-3.13)
+# These packages have pre-built wheels for most Python versions
+
+# Core web framework
+fastapi
+uvicorn[standard]
+
+# Data validation  
+pydantic>=2.0
+pydantic-settings
+
+# Database and cache (install separately if these fail)
+asyncpg
+redis
+
+# Serialization
+msgpack
+
+# Monitoring
+prometheus-client
+python-json-logger
+
+# HTTP client
+httpx
+
+# Testing
+pytest
+pytest-asyncio

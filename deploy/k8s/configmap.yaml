@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: feature-store-config
+  labels:
+    app: feature-store
+data:
+  # Kafka configuration
+  kafka-brokers: "kafka-cluster:9092"
+  kafka-topic: "feature_events"
+  kafka-consumer-group: "feature-store"
+  
+  # Logging
+  log-level: "INFO"
+  
+  # Feature store settings
+  default-ttl-hours: "24"
+  cache-ttl-seconds: "3600"
+  
+  # Performance tuning
+  max-batch-size: "1000"
+  query-timeout-seconds: "5"
+  postgres-min-pool: "10"
+  postgres-max-pool: "50"
+  redis-max-connections: "100"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: feature-store-secrets
+  labels:
+    app: feature-store
+type: Opaque
+stringData:
+  # Database connection string
+  # Replace with your actual credentials
+  postgres-url: "postgresql://user:password@postgres-host:5432/features"
+  
+  # Redis connection string
+  redis-url: "redis://redis-host:6379/0"
+  
+  # API key secret for hashing
+  api-key-secret: "change-me-in-production-use-long-random-string"

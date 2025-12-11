@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: feature-store-api
+    env: docker
+    dockerfilePath: ./deploy/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: feature-store-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: feature-store-redis
+          type: redis
+          property: connectionString
+      - key: API_KEY_SECRET
+        generateValue: true
+      - key: LOG_LEVEL
+        value: INFO
+    healthCheckPath: /health
+
+databases:
+  - name: feature-store-db
+    databaseName: features
+    user: postgres
+    plan: free
+
+services:
+  - type: redis
+    name: feature-store-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru

@@ -1,0 +1,113 @@
+# Feature Schema Definitions
+# This file contains feature definitions that can be registered in the feature store
+
+features:
+  - name: user_age
+    version: 1
+    dtype: int64
+    entity_type: user
+    ttl_hours: 24
+    description: "User age in years"
+    tags:
+      - demographic
+      - static
+    example: 35
+    
+  - name: user_lifetime_value
+    version: 1
+    dtype: float64
+    entity_type: user
+    ttl_hours: 24
+    description: "Predicted customer lifetime value in USD"
+    tags:
+      - revenue
+      - prediction
+      - ml_model
+    example: 2847.32
+    
+  - name: last_purchase_days
+    version: 1
+    dtype: int64
+    entity_type: user
+    ttl_hours: 24
+    description: "Days since last purchase"
+    tags:
+      - engagement
+      - temporal
+    example: 15
+    
+  - name: avg_5min_purchase_value
+    version: 1
+    dtype: float64
+    entity_type: user
+    ttl_hours: 1
+    description: "5-minute rolling average purchase value"
+    tags:
+      - realtime
+      - revenue
+      - windowed
+    example: 127.50
+    
+  - name: purchase_count_7d
+    version: 1
+    dtype: int64
+    entity_type: user
+    ttl_hours: 24
+    description: "Number of purchases in last 7 days"
+    tags:
+      - engagement
+      - behavioral
+    example: 3
+    
+  - name: product_view_count
+    version: 1
+    dtype: int64
+    entity_type: product
+    ttl_hours: 24
+    description: "Total number of product page views"
+    tags:
+      - engagement
+      - product_analytics
+    example: 1523
+    
+  - name: product_conversion_rate
+    version: 1
+    dtype: float64
+    entity_type: product
+    ttl_hours: 24
+    description: "Product conversion rate (purchases / views)"
+    tags:
+      - product_analytics
+      - kpi
+    example: 0.034
+    
+  - name: session_duration_seconds
+    version: 1
+    dtype: int64
+    entity_type: session
+    ttl_hours: 1
+    description: "Total session duration in seconds"
+    tags:
+      - engagement
+      - session_analytics
+    example: 420
+
+# Feature groups for batch registration
+feature_groups:
+  user_demographics:
+    - user_age
+    - user_gender
+    - user_location
+    
+  user_behavior:
+    - last_purchase_days
+    - purchase_count_7d
+    - avg_purchase_value
+    
+  realtime_metrics:
+    - avg_5min_purchase_value
+    - active_session_count
+    
+  product_metrics:
+    - product_view_count
+    - product_conversion_rate
