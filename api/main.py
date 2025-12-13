@@ -36,17 +36,26 @@ async def lifespan(app: FastAPI):
             min_pool=settings.postgres_min_pool,
             max_pool=settings.postgres_max_pool
         )
-        app.state.cache = FeatureCache(
-            settings.redis_url,
-            max_connections=settings.redis_max_connections
-        )
         app.state.registry = FeatureRegistry(settings.postgres_url)
         
         await app.state.store.connect()
-        await app.state.cache.connect()
         await app.state.registry.connect()
         
-        logger.info("All connections established successfully")
+        # Try to connect to Redis, but don't fail if it's not available
+        app.state.cache = None
+        try:
+            cache = FeatureCache(
+                settings.redis_url,
+                max_connections=settings.redis_max_connections
+            )
+            await cache.connect()
+            app.state.cache = cache
+            logger.info("Redis cache connected")
+        except Exception as e:
+            logger.warning(f"Redis connection failed (will continue without caching): {e}")
+            app.state.cache = None
+        
+        logger.info("Database connections established successfully")
         
     except Exception as e:
         logger.error(f"Failed to initialize connections: {e}")
@@ -58,8 +67,9 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down Feature Store API...")
     try:
         await app.state.store.close()
-        await app.state.cache.close()
         await app.state.registry.close()
+        if app.state.cache:
+            await app.state.cache.close()
         logger.info("All connections closed successfully")
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
